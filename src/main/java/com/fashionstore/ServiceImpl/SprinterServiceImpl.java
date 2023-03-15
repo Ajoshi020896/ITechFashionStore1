@@ -1,5 +1,6 @@
 package com.fashionstore.ServiceImpl;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,13 +10,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import com.fashionstore.Controller.ManagerController;
+import com.fashionstore.DTO.CustomerOrderResponseDTO;
 import com.fashionstore.DTO.OrderResponseDTO;
 import com.fashionstore.DTO.OrderResponseWithSprinterDTO;
 import com.fashionstore.DTO.SprinterOrderResponseDTO;
 import com.fashionstore.Entities.Customer;
+import com.fashionstore.Entities.Order;
 import com.fashionstore.Entities.Product;
 import com.fashionstore.Entities.Sprinter;
 import com.fashionstore.Exception.EntityNotFoundException;
+import com.fashionstore.FeignClient.FeignServiceUtil;
 import com.fashionstore.Repository.CustomerRepository;
 import com.fashionstore.Repository.OrderRepository;
 import com.fashionstore.Repository.ProductRepository;
@@ -30,15 +34,18 @@ public class SprinterServiceImpl implements SprinterService {
 
 	@Autowired
 	private ProductRepository productRepository;
-    
+
 	@Autowired
 	private CustomerRepository customerRepository;
-	
+
 	@Autowired
 	private OrderRepository orderRepository;
-	
+
 	@Autowired
 	private ManagerController managerController;
+	
+	@Autowired
+	private FeignServiceUtil feignServiceUtil;
 
 	@Override
 	public Product getProductById(Long productId) {
@@ -77,37 +84,40 @@ public class SprinterServiceImpl implements SprinterService {
 	}
 
 	@Override
-	public OrderResponseWithSprinterDTO getOrderDetails(Long orderId) {
-		
-		OrderResponseWithSprinterDTO finalResponse=new OrderResponseWithSprinterDTO();
-		
-		/* By putting the jar of core project we are like inheriting the project so don't need to call RestTemplate, we are in same service 
-		OrderResponseDTO orderResponseDto=restTemplate.getForObject("http://localhost:8080/manager/getOrderDetailById/"+orderId, OrderResponseDTO.class,orderId);*/
-		
-		// Direct Autowiring and calling the response from the core project
-		OrderResponseDTO orderResponseDto=(OrderResponseDTO)managerController.getOrderDetailById(orderId).getBody();
-		finalResponse.setOrderId(orderResponseDto.getOrderId());
-		finalResponse.setOrderDate(orderResponseDto.getOrderDate());
-		finalResponse.setOrderType(orderResponseDto.getOrderType());
-		finalResponse.setDelieveryDate(orderResponseDto.getDelieveryDate());
-		finalResponse.setCustomerOrderResponseDto(orderResponseDto.getCustomerOrderResponseDto());
-		
-		Sprinter dbSprinter=orderRepository.findByOrderId(orderId).getSprinter();
-		
-		SprinterOrderResponseDTO sprinterOrderResponseDTO=new SprinterOrderResponseDTO();
-		sprinterOrderResponseDTO.setSprinterId(dbSprinter.getSprinterId());
-		sprinterOrderResponseDTO.setSprinterName(dbSprinter.getSprinterName());
-		sprinterOrderResponseDTO.setSprinterMobileNo(dbSprinter.getSprinterMobileNo());
-		sprinterOrderResponseDTO.setSprinterConvenceType(dbSprinter.getSprinterConvenceType());
-		
-		finalResponse.setSprinterOrderResponseDTO(sprinterOrderResponseDTO);
-		
-		return finalResponse;
-		
-		
+	public OrderResponseDTO getOrderDetailsForSprinter(Long orderId) {
+
+		Order dbOrder = orderRepository.findByOrderId(orderId);
+
+		if (dbOrder == null) {
+
+			throw new EntityNotFoundException("601", "Order with id " + orderId + " is not present");
+		}
+		OrderResponseDTO response = new OrderResponseDTO();
+		response.setOrderId(dbOrder.getOrderId());
+		response.setOrderDate(dbOrder.getOrderDate());
+		response.setOrderType(dbOrder.getOrderType());
+		response.setDeliveryDate(dbOrder.getDelieveryDate());
+		Customer dbCustomer = dbOrder.getCustomer();
+		CustomerOrderResponseDTO customerOrderResponseDTO = new CustomerOrderResponseDTO();
+		customerOrderResponseDTO.setCustomerId(dbCustomer.getCustomerId());
+		customerOrderResponseDTO.setCustomerName(dbCustomer.getCustomerName());
+		customerOrderResponseDTO.setCustomerMobileNo(dbCustomer.getCustomerMobileNo());
+		customerOrderResponseDTO.setCustomerAddress(dbCustomer.getCustomerAddress());
+		response.setCustomerOrderResponseDTO(customerOrderResponseDTO);
+
+		return response;
 	}
 
-	
-	
-	
+	@Override
+	public List<Product> getAllProducts() {
+		
+		System.out.println("Feign Client Working Starts");
+		
+		 List<Product> products=feignServiceUtil.getAllProducts();
+		 return products;
+		
+		
+
+	}
+
 }

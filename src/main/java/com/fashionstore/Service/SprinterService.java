@@ -1,7 +1,10 @@
 package com.fashionstore.Service;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
+import com.fashionstore.DTO.OrderResponseDTO;
 import com.fashionstore.DTO.OrderResponseWithSprinterDTO;
 import com.fashionstore.Entities.Customer;
 import com.fashionstore.Entities.Product;
@@ -13,6 +16,8 @@ public interface SprinterService {
 
 	Customer getCustomerById(Long customerId);
 	
-	OrderResponseWithSprinterDTO getOrderDetails(Long orderId);
+	OrderResponseDTO getOrderDetailsForSprinter(Long orderId);
+
+	List<Product> getAllProducts();
 
 }
