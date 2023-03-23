@@ -2,6 +2,8 @@ package com.fashionstore.Controller;
 
 import java.util.List;
 
+import javax.persistence.EntityNotFoundException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,11 +13,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fashionstore.DTO.OrderResponseDTO;
-import com.fashionstore.DTO.OrderResponseWithSprinterDTO;
 import com.fashionstore.Entities.Customer;
 import com.fashionstore.Entities.Product;
 import com.fashionstore.Exception.ControllerException;
-import com.fashionstore.Exception.EntityNotFoundException;
 import com.fashionstore.Service.SprinterService;
 
 @RestController
@@ -25,9 +25,17 @@ public class SprinterController {
 	@Autowired
 	private SprinterService sprinterService;
 
+	@GetMapping("/hello")
+	public String getHello() {
+
+		return "Hello Bhai";
+
+	}
+
 	// get product by id
 	@GetMapping("/product/{id}")
 	public ResponseEntity<?> getProductById(@PathVariable("id") Long productId) {
+		System.out.println("working re");
 
 		try {
 
@@ -94,13 +102,13 @@ public class SprinterController {
 	}
 
 	// feign client testing
-	@GetMapping("/getallproducts")
+	@GetMapping("/getallproductsbysprinter")
 	public ResponseEntity<?> getAllProducts() {
 
 		try {
 
-			List<Product> productResponse = sprinterService.getAllProducts();
-			return new ResponseEntity<>(productResponse, HttpStatus.OK);
+			ResponseEntity<?> productResponse = sprinterService.getAllProducts();
+			return new ResponseEntity<>(productResponse.getBody(), HttpStatus.OK);
 
 		} catch (EntityNotFoundException e) {
 

@@ -6,14 +6,13 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
-@ComponentScan(basePackages = "com.fashionstore")
 @EnableFeignClients
 public class ITechFashionStore1Application {
 
 	public static void main(String[] args) {
 		SpringApplication.run(ITechFashionStore1Application.class, args);
 		System.out.println("I am ITechFashionStore Service 1 ");
-		System.out.println("Bhaiya m kaam kr raha hu 8081 port p");
+		System.out.println("Bhaiya m kaam kr raha hu 8082 port p");
 
 	}
     
