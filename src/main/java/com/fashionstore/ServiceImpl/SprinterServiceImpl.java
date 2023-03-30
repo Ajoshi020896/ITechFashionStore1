@@ -102,7 +102,7 @@ public class SprinterServiceImpl implements SprinterService {
 	@Override
 	public ResponseEntity<?> getAllProducts() {
 
-		System.out.println("Feign Client Working Starts");
+		System.out.println("Inside serviceImpl of sprinter");
 
 		return feignServiceProductUtil.getAllProducts();
 

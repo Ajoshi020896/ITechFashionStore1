@@ -19,7 +19,7 @@ import com.fashionstore.Exception.ControllerException;
 import com.fashionstore.Service.SprinterService;
 
 @RestController
-@RequestMapping("/sprinter")
+@RequestMapping("itechfashionstoreservice1/sprinter")
 public class SprinterController {
 
 	@Autowired
@@ -106,7 +106,7 @@ public class SprinterController {
 	public ResponseEntity<?> getAllProducts() {
 
 		try {
-
+             System.out.println("Inside sprinter controller");
 			ResponseEntity<?> productResponse = sprinterService.getAllProducts();
 			return new ResponseEntity<>(productResponse.getBody(), HttpStatus.OK);
 
@@ -117,7 +117,6 @@ public class SprinterController {
 
 		catch (Exception e) {
 			e.printStackTrace();
-
 			ControllerException ce = new ControllerException("601", "Something wrong with the Controller");
 			return new ResponseEntity<String>(ce.getErrorDescription(), HttpStatus.BAD_REQUEST);
 		}
