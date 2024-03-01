@@ -6,17 +6,21 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class OrderResponseWithSprinterDTO {
+public class OrderResponseDTO {
 	
 	private Long orderId;
-	private String orderType;
 	private Date orderDate;
-	private Date delieveryDate;
-	private CustomerOrderResponseDTO customerOrderResponseDto;
-	private SprinterOrderResponseDTO sprinterOrderResponseDTO;
+	private String orderType;
+	private Date deliveryDate;
+	private CustomerOrderResponseDTO customerOrderResponseDTO;
+	
+	
+	
+	
 
 }
